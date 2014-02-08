@@ -1,0 +1,11 @@
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.vbproj.ResolveComReference.cache
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.Resources.resources
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.vbproj.GenerateResource.Cache
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\bin\Debug\Resources.dll
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\bin\Debug\Resources.pdb
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\bin\Debug\Resources.xml
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\bin\Debug\itextsharp.dll
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.dll
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.xml
+C:\Users\Zr7\Documents\Visual Studio 2005\Projects\Resources\Resources\obj\Debug\Resources.pdb
