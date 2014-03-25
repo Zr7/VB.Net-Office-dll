@@ -108,6 +108,7 @@ Namespace VBExcell
         Dim CurPath As String
         Public Sub OpenExcell(ByVal NameBook As String)
             'Open excel, en controleer de versie
+            'dit is niet op te vangen in een try-catch statement
             On Error Resume Next
             If (Not (Path.GetFullPath(NameBook)) = Nothing) Then
                 If (File.Exists(NameBook)) Then
@@ -221,24 +222,23 @@ GoNext:
             On Error Resume Next
             xlWorkSheet = xlApp.Worksheets(Nmsheet)
             Return xlWorkSheet.Range(Rng).Value2
+            
         End Function
 
         Function GetCellValue(ByVal NmSheet As String, ByVal Rnm As Integer, _
                                     ByVal Cnm As Integer) As String
             'geeft de waardes weer van een cel van een excel blad
-            Dim Val As String
             On Error Resume Next
             xlWorkSheet = xlApp.Worksheets(NmSheet)
-            'Val. = xlWorkSheet.Cells(Rnm, Cnm)
             Return xlWorkSheet.Cells(Rnm, Cnm).Value
-
+          
         End Function
 
         Sub CloseExcell()
             'sluit excell en bewaar de veranderingen niet
             'de systeem landinstellingen worden terug gezet
             On Error Resume Next
-            xlWorkBook.Close(False)
+            xlWorkBook.Close(False, , )
             xlApp.Quit()
 
             If NoError = False Then
@@ -264,18 +264,17 @@ GoNext:
             Catch ex As System.Exception
                 MessageBox.Show(ex.Message & "=======  Fout Tijdens opslaan:  ======")
             Finally
-                'ReleaseObject(xlApp)
+                'geheugen vrijmaken
                 ReleaseObject(xlWorkBook)
                 ReleaseObject(xlWorkSheet)
                 ReleaseObject(NoError)
             End Try
         End Sub
         Sub CloseSavePdf(ByVal Nmbook As String)
-
+            'missend waardes moeten we eerst declareren
             Dim misValue As Object = System.Reflection.Missing.Value
 
             Try
-                'xlWorkBook = xlApp.Workbooks.Open(Nmbook)
                 xlWorkBook.ExportAsFixedFormat(excel.XlFixedFormatType.xlTypePDF _
                 , Nmbook, excel.XlFixedFormatQuality.xlQualityStandard, _
                 misValue, misValue, misValue, misValue, True)
@@ -283,17 +282,14 @@ GoNext:
                 CloseExcell()
 
             Catch ex As System.IO.IOException
-                MessageBox.Show("\=======  WRITE TO PDF ERROR:  ======" _
-                & Chr(10) & "Er wordt geen excell Bestand bewaard")
+                MessageBox.Show("\=======  PDF ERROR:  ======" _
+                & Chr(10) & "Er wordt geen PDF Bestand bewaard")
                 CloseExcell()
             Catch ex As System.Exception
-                MessageBox.Show("\n\n=======  WRITE TO PDF ERROR:  ======\n\n" _
-                & Chr(10) & "Er wordt geen excell Bestand bewaard")
-                '
+                MessageBox.Show("\n\n=======  PDF ERROR:  ======\n\n" _
+                & Chr(10) & "Er wordt geen PDF Bestand bewaard")
                 'Ondanks de fout , niet vergeten excell af te sluiten 
-                '
                 CloseExcell()
-
             Finally
                 ' geheugen vrijgeven
                 ReleaseObject(misValue)
@@ -304,7 +300,7 @@ GoNext:
 
             Try
                 While (System.Runtime.InteropServices.Marshal.ReleaseComObject(obj) > 0)
-                    'obj = Nothing
+
                 End While
             Catch ex As Exception
                 obj = Nothing
@@ -322,31 +318,37 @@ GoNext:
             'Deze Class behandeld en verstuurt emails vanuit een programma
             'Niet over na denken , gewoon gebruiken
             Public Function AddRecipientTo(ByVal email As String) As Boolean
+                'Ontvanger toevoegen
                 Return AddRecipient(email, howTo.MAPI_TO)
             End Function
 
             Public Function AddRecipientCC(ByVal email As String) As Boolean
+                'tweede ontvanger toevoegen
                 Return AddRecipient(email, howTo.MAPI_TO)
             End Function
 
             Public Function AddRecipientBCC(ByVal email As String) As Boolean
+                'Nog zo'n Ontvanger
                 Return AddRecipient(email, howTo.MAPI_TO)
             End Function
 
             Public Sub AddAttachment(ByVal strAttachmentFileName As String)
+                'Attachement toe voegen
                 m_attachments.Add(strAttachmentFileName)
             End Sub
 
             Public Function SendMailPopup(ByVal strSubject As String, _
                     ByVal strBody As String) As Integer
+                'via pop mail versturen
                 Return SendMail(strSubject, strBody, MAPI_LOGON_UI Or MAPI_DIALOG)
             End Function
 
             Public Function SendMailDirect(ByVal strSubject As String, _
                 ByVal strBody As String) As Integer
+                'directe vesturing
                 Return SendMail(strSubject, strBody, MAPI_LOGON_UI)
             End Function
-
+            'Wrapper voor dll import
 
             <DllImport("MAPI32.DLL")> _
             Private Shared Function MAPISendMail(ByVal sess As IntPtr, _
@@ -411,7 +413,8 @@ GoNext:
                     'bepaal of er een bestand is
                     Return 0
                 End If
-
+                'als de gevonden bovenste waarde groter is als 0, dan bepalen hoeveel
+                'bestanden mee gestuurd moeten worden
                 If (m_attachments.Count <= 0) Or (m_attachments.Count > _
                     maxAttachments) Then
                     Return 0
@@ -420,7 +423,7 @@ GoNext:
                 Dim size As Integer = Marshal.SizeOf(GetType(MapiFileDesc))
                 Dim intPtr As IntPtr = Marshal.AllocHGlobal( _
                     m_attachments.Count * size)
-
+                'beschrijving van het bestand
                 Dim mapiFileDesc As MapiFileDesc = New MapiFileDesc()
                 mapiFileDesc.position = -1
                 Dim ptr As Integer = CType(intPtr, Integer)
